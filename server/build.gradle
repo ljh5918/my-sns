@@ -1,3 +1,72 @@
+
+// plugins {
+//     id 'java'
+//     id 'org.springframework.boot' version '3.5.3'
+//     id 'io.spring.dependency-management' version '1.1.7'
+// }
+
+// group = 'com.myapp.sns'
+// version = '0.0.1-SNAPSHOT'
+
+// java {
+//     toolchain {
+//         languageVersion = JavaLanguageVersion.of(17)
+//     }
+// }
+
+// repositories {
+//     mavenCentral()
+// }
+
+// dependencies {
+//     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+//     implementation 'org.springframework.boot:spring-boot-starter-security'
+//     implementation 'org.springframework.boot:spring-boot-starter-web'
+//     developmentOnly 'org.springframework.boot:spring-boot-devtools'
+//     runtimeOnly 'com.mysql:mysql-connector-j'
+//     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+//     testImplementation 'org.springframework.security:spring-security-test'
+//     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+
+//     // Post.java -> Lombok 의존성 추가
+//     compileOnly 'org.projectlombok:lombok:1.18.30'
+//     annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+//     //signup, login 의준성 추가
+//     implementation 'org.springframework.boot:spring-boot-starter-security'
+//     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+//     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+//     runtimeOnly('io.jsonwebtoken:jjwt-jackson:0.11.5') // for JSON parser
+
+// }
+
+// // tasks.named('test') {
+// //     useJUnitPlatform()
+// // }
+
+// tasks.named('bootRun') {
+//     mainClass = 'com.myapp.sns.MySnsApplication'
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.5.3'
@@ -18,25 +87,39 @@ repositories {
 }
 
 dependencies {
+    // 핵심 스프링 의존성
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation' // 추가: @Valid 사용 시 필요
+
+    // 개발 편의성
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    // MySQL JDBC 드라이버
     runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // 테스트 관련
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-
-    // Post.java -> Lombok 의존성 추가
+    // Lombok (Post.java 등에서 사용됨)
     compileOnly 'org.projectlombok:lombok:1.18.30'
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+    // JWT 로그인 관련 의존성 (signup, login 관련)
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5' // for JSON parser
 }
 
+// 테스트 설정 (필요 시 주석 해제)
 // tasks.named('test') {
 //     useJUnitPlatform()
 // }
 
+// Spring Boot 메인 클래스 지정
 tasks.named('bootRun') {
     mainClass = 'com.myapp.sns.MySnsApplication'
 }

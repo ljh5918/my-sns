@@ -1,10 +1,3 @@
-// package com.myapp.sns.Repository;
-
-// public class PostRepository {
-  
-// }
-
-
 package com.myapp.sns.repository;
 
 import com.myapp.sns.entity.Post;
