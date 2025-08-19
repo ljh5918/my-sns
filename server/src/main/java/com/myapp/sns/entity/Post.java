@@ -1,33 +1,3 @@
-// package com.myapp.sns.entity;
-
-// import jakarta.persistence.*;
-// import lombok.*;
-
-// import java.time.LocalDateTime;
-
-// @Entity
-// @Getter @Setter
-// @NoArgsConstructor
-// @AllArgsConstructor
-// @Builder
-// public class Post {
-    
-//     @Id
-//     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//     private Long id;
-
-//     private String content;
-
-//     private String imageUrl;
-
-//     private Double latitude;
-//     private Double longitude;
-
-//     private LocalDateTime createdAt;
-// }
-
-
-
 package com.myapp.sns.entity;
 
 import jakarta.persistence.*;
@@ -67,3 +37,10 @@ public class Post {
         this.updatedAt = LocalDateTime.now();
     }
 }
+
+
+
+
+
+
+
