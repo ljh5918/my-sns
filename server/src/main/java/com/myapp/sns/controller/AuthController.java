@@ -87,8 +87,10 @@ import com.myapp.sns.dto.SignupRequest;
 import com.myapp.sns.repository.UserRepository;
 
 import io.jsonwebtoken.lang.Collections;
+import jakarta.validation.Valid;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.BindingResult;
 
 
 
@@ -103,21 +105,29 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
      private final JwtUtil jwtUtil; 
 
-    @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody SignupRequest request) {
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            return ResponseEntity.badRequest().body("이미 존재하는 이메일입니다.");
-        }
-
-        User user = User.builder()
-                .email(request.getEmail())
-                .username(request.getUsername())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .build();
-
-        userRepository.save(user);
-        return ResponseEntity.ok("회원가입 성공");
+   @PostMapping("/signup")
+public ResponseEntity<?> signup(@Valid @RequestBody SignupRequest request,
+                                BindingResult bindingResult) {
+    if (bindingResult.hasErrors()) {
+        // 에러 메시지 반환
+        return ResponseEntity.badRequest().body(
+                bindingResult.getAllErrors().get(0).getDefaultMessage()
+        );
     }
+
+    if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+        return ResponseEntity.badRequest().body("이미 존재하는 이메일입니다.");
+    }
+
+    User user = User.builder()
+            .email(request.getEmail())
+            .username(request.getUsername())
+            .password(passwordEncoder.encode(request.getPassword()))
+            .build();
+
+    userRepository.save(user);
+    return ResponseEntity.ok("회원가입 성공");
+}
 
 @PostMapping("/login")
 public ResponseEntity<?> login(@RequestBody LoginRequest request) {
