@@ -37,10 +37,3 @@ public class Post {
         this.updatedAt = LocalDateTime.now();
     }
 }
-
-
-
-
-
-
-

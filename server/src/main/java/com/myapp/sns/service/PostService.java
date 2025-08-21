@@ -9,6 +9,7 @@ import com.myapp.sns.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,73 +20,66 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
-    // 게시글 전체 조회 (로그인 여부 상관 없음)
+    // 전체 게시글
     public List<PostResponse> getAllPosts() {
         return postRepository.findAll().stream()
-                .map(this::toResponse)
+                .map(PostResponse::from)
                 .collect(Collectors.toList());
     }
 
-    // 단일 게시글 조회
+    // 단일 게시글
     public PostResponse getPost(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
-        return toResponse(post);
+        return PostResponse.from(post);
     }
 
-    
+    // 내 게시글 목록
+    public List<PostResponse> getPostsByUser(String email) {
+        User me = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));
+        return postRepository.findByAuthor(me).stream()
+                .map(PostResponse::from)
+                .collect(Collectors.toList());
+    }
 
-
-    // 게시글 작성 (로그인 사용자만)
-    public PostResponse createPost(PostRequest request, String userEmail) {
-        User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
+    // 내 글 작성
+    public PostResponse createMyPost(PostRequest req, String email) {
+        User me = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));
 
         Post post = Post.builder()
-                .content(request.getContent())
-                .imageUrl(request.getImageUrl())
-                .author(user)
+                .content(req.getContent())
+                .imageUrl(req.getImageUrl())
+                .author(me)
+                .createdAt(LocalDateTime.now())
                 .build();
 
-        return toResponse(postRepository.save(post));
+        return PostResponse.from(postRepository.save(post));
     }
 
-    // 게시글 수정 (작성자 본인만 가능)
-    public PostResponse updatePost(Long id, PostRequest request, String userEmail) {
+    // 내 글 수정
+    public PostResponse updateMyPost(Long id, PostRequest req, String email) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
 
-        if (!post.getAuthor().getEmail().equals(userEmail)) {
+        if (!post.getAuthor().getEmail().equals(email)) {
             throw new RuntimeException("수정 권한이 없습니다.");
         }
 
-        post.setContent(request.getContent());
-        post.setImageUrl(request.getImageUrl());
-
-        return toResponse(postRepository.save(post));
+        post.setContent(req.getContent());
+        post.setImageUrl(req.getImageUrl());
+        return PostResponse.from(postRepository.save(post));
     }
 
-    // 게시글 삭제 (작성자 본인만 가능)
-    public void deletePost(Long id, String userEmail) {
+    // 내 글 삭제
+    public void deleteMyPost(Long id, String email) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
 
-        if (!post.getAuthor().getEmail().equals(userEmail)) {
+        if (!post.getAuthor().getEmail().equals(email)) {
             throw new RuntimeException("삭제 권한이 없습니다.");
         }
-
         postRepository.delete(post);
-    }
-
-    // Entity → DTO 변환
-    private PostResponse toResponse(Post post) {
-        return PostResponse.builder()
-                .id(post.getId())
-                .content(post.getContent())
-                .imageUrl(post.getImageUrl())
-                .createdAt(post.getCreatedAt())
-                .authorEmail(post.getAuthor().getEmail())
-                .authorUsername(post.getAuthor().getUsername())
-                .build();
     }
 }
